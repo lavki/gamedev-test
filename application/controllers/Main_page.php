@@ -83,26 +83,25 @@ class Main_page extends MY_Controller
         return $this->response_success(['post' => $posts]);
     }
 
-
-    public function login($user_id)
+    public function login()
     {
-        // Right now for tests:
-        $post_id = intval($user_id);
+        // But data from modal window sent by POST request.  App::get_ci()->input...  to get it.
+        //Todo: Authorisation
+        if ($this->is_post()) {
+            $user_id = User_model::authenticate(
+                $this->get_input_stream('login'),
+                $this->get_input_stream('password')
+            );
 
-        if (empty($post_id)){
-            return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
+            Login_model::start_session($user_id);
         }
 
-        // But data from modal window sent by POST request.  App::get_ci()->input...  to get it.
-
-
-        //Todo: Authorisation
-
-        Login_model::start_session($user_id);
-
-        return $this->response_success(['user' => $user_id]);
+        if (User_model::is_logged()) {
+            return $this->response_success(['user' => User_model::get_session_id()]);
+        } else {
+            return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);
+        }
     }
-
 
     public function logout()
     {
@@ -126,4 +125,20 @@ class Main_page extends MY_Controller
         return $this->response_success(['likes' => rand(1,55)]); // Колво лайков под постом \ комментарием чтобы обновить
     }
 
+    /**
+     * @return bool
+     */
+    private function is_post()
+    {
+        return App::get_ci()->input->method(TRUE) === 'POST';
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    private function get_input_stream(string $key)
+    {
+        return json_decode(file_get_contents('php://input'), true)[$key];
+    }
 }
