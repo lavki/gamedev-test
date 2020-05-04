@@ -461,4 +461,20 @@ class User_model extends CI_Emerald_Model {
             throw new Exception('Something wrong with User model');
         }
     }
+
+    /**
+     * @return bool
+     */
+    public static function can_liked()
+    {
+        return (self::get_user()->get_likes() >= 1);
+    }
+
+    /**
+     * @return bool
+     */
+    public static function spent_like()
+    {
+        return self::get_user()->set_likes(self::get_user()->get_likes() - 1);
+    }
 }

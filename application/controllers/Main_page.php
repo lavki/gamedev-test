@@ -16,6 +16,8 @@ class Main_page extends MY_Controller
         App::get_ci()->load->model('User_model');
         App::get_ci()->load->model('Login_model');
         App::get_ci()->load->model('Post_model');
+        App::get_ci()->load->model('Boosterpack_model');
+        App::get_ci()->load->model('Like_model');
 
         if (is_prod())
         {
@@ -26,8 +28,6 @@ class Main_page extends MY_Controller
     public function index()
     {
         $user = User_model::get_user();
-
-
 
         App::get_ci()->load->view('main_page', ['user' => User_model::preparation($user, 'default')]);
     }
@@ -87,7 +87,6 @@ class Main_page extends MY_Controller
     public function login()
     {
         // But data from modal window sent by POST request.  App::get_ci()->input...  to get it.
-        //Todo: Authorisation
         if ($this->is_post()) {
             $user_id = User_model::authenticate(
                 $this->get_input_stream('login'),
@@ -136,8 +135,6 @@ class Main_page extends MY_Controller
 
     public function buy_boosterpack()
     {
-        App::get_ci()->load->model('Boosterpack_model');
-
         if ($this->is_post()) {
             $result = Boosterpack_model::winning_likes($this->get_input_stream('id'));
 
@@ -147,9 +144,12 @@ class Main_page extends MY_Controller
         }
     }
 
-    public function like(){
-        // todo: add like post\comment logic
-        return $this->response_success(['likes' => rand(1,55)]); // Колво лайков под постом \ комментарием чтобы обновить
+    public function like(int $relation_id, string $type = 'post')
+    {
+        Like_model::create(Like_model::prepareData($relation_id, $type));
+
+        return $this->response_success(['likes' => Like_model::like_counter($relation_id, $type)]);
+        // Колво лайков под постом \ комментарием чтобы обновить
     }
 
     /**
