@@ -28,6 +28,8 @@ class User_model extends CI_Emerald_Model {
     protected $wallet_total_refilled;
     /** @var float */
     protected $wallet_total_withdrawn;
+    /** @var integer */
+    protected $likes;
     /** @var string */
     protected $time_created;
     /** @var string */
@@ -186,6 +188,24 @@ class User_model extends CI_Emerald_Model {
     {
         $this->wallet_total_withdrawn = $wallet_total_withdrawn;
         return $this->save('wallet_total_withdrawn', $wallet_total_withdrawn);
+    }
+
+    /**
+     * @return int
+     */
+    public function get_likes(): int
+    {
+        return $this->likes;
+    }
+
+    /**
+     * @param int $likes
+     * @return bool
+     */
+    public function set_likes(int $likes): bool
+    {
+        $this->likes = $likes;
+        return $this->save('likes', $likes);
     }
 
     /**
@@ -423,5 +443,22 @@ class User_model extends CI_Emerald_Model {
     private function incoming_sum_wallet_total_refilled(float $sum)
     {
         return $sum + $this->get_wallet_total_refilled();
+    }
+
+    /**
+     * @param User_model $user
+     * @param Boosterpack_model $boosterPack
+     * @param int $winLikes
+     * @throws Exception
+     */
+    public static function spent_money_for_boosterpack_and_add_likes(self $user, Boosterpack_model $boosterPack, int $winLikes)
+    {
+        try {
+            $user->set_wallet_balance($user->get_wallet_balance() - $boosterPack->get_price());
+            $user->set_wallet_total_withdrawn($user->get_wallet_total_withdrawn() + $boosterPack->get_price());
+            $user->set_likes($user->get_likes() + $winLikes);
+        } catch (Exception $exception) {
+            throw new Exception('Something wrong with User model');
+        }
     }
 }

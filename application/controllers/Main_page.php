@@ -134,11 +134,18 @@ class Main_page extends MY_Controller
         return $result;
     }
 
-    public function buy_boosterpack(){
-        // todo: add money to user logic
-        return $this->response_success(['amount' => rand(1,55)]);
-    }
+    public function buy_boosterpack()
+    {
+        App::get_ci()->load->model('Boosterpack_model');
 
+        if ($this->is_post()) {
+            $result = Boosterpack_model::winning_likes($this->get_input_stream('id'));
+
+            return $this->response_success(['amount' => $result]);
+        } else {
+            return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_ACCESS);
+        }
+    }
 
     public function like(){
         // todo: add like post\comment logic

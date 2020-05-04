@@ -124,4 +124,34 @@ class Boosterpack_model extends CI_Emerald_Model
         return (App::get_ci()->s->get_affected_rows() > 0);
     }
 
+    /**
+     * @param int $id
+     * @return int
+     */
+    public static function winning_likes(int $id): int
+    {
+        $winLikes = 0;
+        $boosterPack = new self($id);
+        $user = User_model::get_user();
+
+        if ($user->get_wallet_balance() >= $boosterPack->get_price()) {
+            $winLikes = self::get_random_likes($boosterPack->get_bank(), $boosterPack->get_price());
+
+            User_model::spent_money_for_boosterpack_and_add_likes($user, $boosterPack, $winLikes);
+
+            $boosterPack->set_bank($boosterPack->get_price() - $winLikes);
+        }
+
+        return $winLikes;
+    }
+
+    /**
+     * @param float $bank
+     * @param float $price
+     * @return int
+     */
+    public static function get_random_likes(float $bank, float $price): int
+    {
+        return rand(1, ($bank + $price));
+    }
 }
