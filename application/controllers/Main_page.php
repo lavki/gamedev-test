@@ -110,9 +110,28 @@ class Main_page extends MY_Controller
         redirect(site_url('/'));
     }
 
-    public function add_money(){
-        // todo: add money to user logic
-        return $this->response_success(['amount' => rand(1,55)]);
+    /**
+     * @return mixed
+     */
+    public function add_money()
+    {
+        if (!User_model::is_logged()) {
+            return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);
+        }
+
+        $user = User_model::get_user();
+
+        if ($this->is_post()) {
+            if ($this->get_input_stream('sum') < 1) {
+                return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
+            }
+
+            $result = $this->response_success(['amount' => $user->add_money($this->get_input_stream('sum'))]);
+        } else {
+            $result = $this->response_success(['amount' => $user->add_money(rand(1,55))]);
+        }
+
+        return $result;
     }
 
     public function buy_boosterpack(){
