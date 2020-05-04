@@ -58,28 +58,29 @@ class Main_page extends MY_Controller
         return $this->response_success(['post' => $posts]);
     }
 
-
-    public function comment($post_id,$message){ // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
-
-        if (!User_model::is_logged()){
+    public function comment(int $post_id, string $message) // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
+    {
+        if (!User_model::is_logged()) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);
         }
 
         $post_id = intval($post_id);
 
-        if (empty($post_id) || empty($message)){
+        if (empty($post_id) || empty($message)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
         }
 
-        try
-        {
+        try {
             $post = new Post_model($post_id);
-        } catch (EmeraldModelNoDataException $ex){
+
+            Comment_model::create(Comment_model::prepareData($post_id, $message));
+
+        } catch (EmeraldModelNoDataException $ex) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_DATA);
         }
 
-
         $posts =  Post_model::preparation($post, 'full_info');
+
         return $this->response_success(['post' => $posts]);
     }
 
