@@ -62,9 +62,10 @@ var app = new Vue({
 					password: self.pass
 				})
 					.then(function (response) {
-						setTimeout(function () {
-							$('#loginModal').modal('hide');
-						}, 500);
+                        setTimeout(function () {
+                            $('#loginModal').modal('hide');
+                            location.reload();
+                        }, 500);
 					})
 			}
 		},
