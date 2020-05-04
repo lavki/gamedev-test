@@ -394,4 +394,34 @@ class User_model extends CI_Emerald_Model {
 
         return ($user && ($user['password'] === $password)) ? $user['id'] : 0;
     }
+
+    /**
+     * @param float $sum
+     * @return float
+     */
+    public function add_money(float $sum): float
+    {
+        $this->set_wallet_balance($this->incoming_sum_with_balance($sum));
+        $this->set_wallet_total_refilled($this->incoming_sum_wallet_total_refilled($sum));
+
+        return $this->get_wallet_balance();
+    }
+
+    /**
+     * @param float $sum
+     * @return float
+     */
+    private function incoming_sum_with_balance(float $sum)
+    {
+        return $sum + $this->get_wallet_balance();
+    }
+
+    /**
+     * @param float $sum
+     * @return float
+     */
+    private function incoming_sum_wallet_total_refilled(float $sum)
+    {
+        return $sum + $this->get_wallet_total_refilled();
+    }
 }
