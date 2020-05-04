@@ -121,7 +121,23 @@ var app = new Vue({
 						}, 500);
 					}
 				})
-		}
+		},
+        addComment: function (post_id) {
+            var self = this;
+
+            axios.get('/main_page/comment/' + post_id + '/' + self.commentText)
+                .then(function (response) {
+                    self.post = response.data.post;
+                    if(self.post){
+                        self.commentText = ''
+                        setTimeout(function () {
+                            $('#postModal').modal('show');
+                        }, 500);
+                    }
+                })
+
+            event.preventDefault()
+        }
 	}
 });
 

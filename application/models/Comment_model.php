@@ -254,5 +254,17 @@ class Comment_model extends CI_Emerald_Model
         return $ret;
     }
 
-
+    /**
+     * @param int $post_id
+     * @param string $message
+     * @return array
+     */
+    public static function prepareData(int $post_id, string $message)
+    {
+        return [
+            'user_id'   => User_model::get_session_id(),
+            'assign_id' => $post_id,
+            'text'      => urldecode($message)
+        ];
+    }
 }

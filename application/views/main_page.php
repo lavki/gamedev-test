@@ -182,7 +182,7 @@
                 <div class="form-group">
                   <input type="text" class="form-control" id="addComment" v-model="commentText">
                 </div>
-                <button type="submit" class="btn btn-primary">Add comment</button>
+                <button type="submit" class="btn btn-primary" @click="addComment(post.id)">Add comment</button>
               </form>
             </div>
           </div>
