@@ -146,7 +146,13 @@ class Main_page extends MY_Controller
 
     public function like(int $relation_id, string $type = 'post')
     {
-        Like_model::create(Like_model::prepareData($relation_id, $type));
+        if (!User_model::is_logged()) {
+            return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);
+        }
+
+        if (Like_model::is_available_type($type)) {
+            Like_model::create(Like_model::prepareData($relation_id, $type));
+        }
 
         return $this->response_success(['likes' => Like_model::like_counter($relation_id, $type)]);
         // Колво лайков под постом \ комментарием чтобы обновить
