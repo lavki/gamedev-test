@@ -5,7 +5,10 @@
  */
 class Like_model extends CI_Emerald_Model
 {
-    const CLASS_TABLE = 'likes';
+    const POST_LIKE    = 'post';
+    const COMMENT_LIKE = 'comment';
+
+    const CLASS_TABLE  = 'likes';
 
     /** @var int */
     protected $user_id;
@@ -186,5 +189,27 @@ class Like_model extends CI_Emerald_Model
             'relation_id' => $relation_id,
             'type'        => $type,
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function get_available_types()
+    {
+        return [self::POST_LIKE, self::COMMENT_LIKE];
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     * @throws Exception
+     */
+    public static function is_available_type(string $type)
+    {
+        if (!in_array($type, self::get_available_types())) {
+            throw new Exception('Undefined type');
+        }
+
+        return true;
     }
 }
