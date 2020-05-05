@@ -133,6 +133,12 @@ class Comment_model extends CI_Emerald_Model
      */
     public function get_likes()
     {
+        $this->is_loaded(TRUE);
+
+        if (empty($this->likes)) {
+            $this->likes = Like_model::get_all_by_relation_id($this->get_id());
+        }
+
         return $this->likes;
     }
 

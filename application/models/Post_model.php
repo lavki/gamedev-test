@@ -115,8 +115,7 @@ class Post_model extends CI_Emerald_Model
     }
 
     /**
-     * @param string $time_updated
-     *
+     * @param int $time_updated
      * @return bool
      */
     public function set_time_updated(int $time_updated)
@@ -281,7 +280,7 @@ class Post_model extends CI_Emerald_Model
 
         $o->user = User_model::preparation($data->get_user(),'main_page');
         $o->coments = Comment_model::preparation($data->get_comments(),'full_info');
-        $o->likes = Like_model::like_counter($data->get_id());
+        $o->likes = Like_model::like_counter($data->get_id(), Like_model::POST_LIKE);
 
         $o->time_created = $data->get_time_created();
         $o->time_updated = $data->get_time_updated();
