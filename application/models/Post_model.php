@@ -158,7 +158,7 @@ class Post_model extends CI_Emerald_Model
     /**
      * @return User_model
      */
-    public function get_user():User_model
+    public function get_user(): User_model
     {
         $this->is_loaded(TRUE);
 
