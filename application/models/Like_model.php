@@ -5,15 +5,15 @@
  */
 class Like_model extends CI_Emerald_Model
 {
-    const POST_LIKE    = 'post';
-    const COMMENT_LIKE = 'comment';
+    const POST_LIKE    = 'post';   // or post like
+    const COMMENT_LIKE = 'comment'; // or comment like
 
     const CLASS_TABLE  = 'likes';
 
     /** @var int */
     protected $user_id;
     /** @var int */
-    protected $relation_id;
+    protected $relation_id; // who is parent, default null
     /** @var string*/
     protected $type;
 
@@ -144,6 +144,7 @@ class Like_model extends CI_Emerald_Model
     }
 
     /**
+     * Get all likes by relation_id (post or comment)
      * @param int $relation_id
      * @param string $type
      * @return array
@@ -166,6 +167,7 @@ class Like_model extends CI_Emerald_Model
     }
 
     /**
+     * Count all likes
      * @param int $relation_id
      * @param string $type
      * @return int
@@ -176,6 +178,7 @@ class Like_model extends CI_Emerald_Model
     }
 
     /**
+     * Build array before store a like into DB
      * @param int $relation_id
      * @param string $type
      * @return array
@@ -190,6 +193,7 @@ class Like_model extends CI_Emerald_Model
     }
 
     /**
+     * For now only 2 types, post-type and comment-type. But can be more types on the future
      * @return array
      */
     public static function get_available_types()
@@ -198,6 +202,7 @@ class Like_model extends CI_Emerald_Model
     }
 
     /**
+     * Check if we have type on our system (and on db enum field type)
      * @param string $type
      * @return bool
      * @throws Exception

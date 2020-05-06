@@ -18,7 +18,7 @@ class Comment_model extends CI_Emerald_Model
     /** @var string */
     protected $text;
     /** @var int */
-    protected $parent_id;
+    protected $parent_id; // who is parent (default null)
 
     /** @var string */
     protected $time_created;
@@ -146,6 +146,7 @@ class Comment_model extends CI_Emerald_Model
     // generated
 
     /**
+     * Get all likes by assing_id (belong or for post or for comment)
      * @return mixed
      */
     public function get_likes()
@@ -226,6 +227,7 @@ class Comment_model extends CI_Emerald_Model
     }
 
     /**
+     * Build multi-comments tree (recursive method)
      * @param array $data
      * @param int|null $parent_id
      * @return array
@@ -266,6 +268,7 @@ class Comment_model extends CI_Emerald_Model
 
 
     /**
+     * Class for front side
      * @param array $data
      * @return array
      */
@@ -294,6 +297,7 @@ class Comment_model extends CI_Emerald_Model
     }
 
     /**
+     * Prepare array before store the data into DB
      * @param int $post_id
      * @param string $message
      * @return array
