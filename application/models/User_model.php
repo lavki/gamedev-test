@@ -408,11 +408,17 @@ class User_model extends CI_Emerald_Model {
      * @param string $password
      * @return int
      */
-    public static function authenticate(string $email, string $password): int
+    public static function authenticate(string $email, string $password)
     {
+        // password for admin@niceadminmail.pl = password
+        // password for simpleuser@niceadminmail.pl = secret
         $user = self::findByEmail($email);
 
-        return ($user && ($user['password'] === $password)) ? $user['id'] : 0;
+        if (!empty($user) && password_verify($password, $user['password'])) {
+            return $user['id'];
+        }
+
+        return 0;
     }
 
     /**
