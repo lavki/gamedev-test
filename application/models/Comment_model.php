@@ -17,6 +17,8 @@ class Comment_model extends CI_Emerald_Model
     protected $assign_id;
     /** @var string */
     protected $text;
+    /** @var int */
+    protected $parent_id;
 
     /** @var string */
     protected $time_created;
@@ -86,6 +88,23 @@ class Comment_model extends CI_Emerald_Model
         return $this->save('text', $text);
     }
 
+    /**
+     * @return int|null
+     */
+    public function get_parent_id():? int
+    {
+        return $this->parent_id;
+    }
+
+    /**
+     * @param int $parent_id
+     * @return bool
+     */
+    public function set_parent_id(int $parent_id)
+    {
+        $this->parent_id = $parent_id;
+        return $this->save('parent_id', $parent_id);
+    }
 
     /**
      * @return string
@@ -201,10 +220,7 @@ class Comment_model extends CI_Emerald_Model
      */
     public static function get_all_by_assign_id(int $assting_id)
     {
-
         $data = App::get_ci()->s->from(self::CLASS_TABLE)->where(['assign_id' => $assting_id])->orderBy('time_created','ASC')->many();
-
-        var_dump(self::get_tree_of_comments($data)); exit;
 
         return self::get_tree_of_comments($data);
     }
@@ -250,31 +266,30 @@ class Comment_model extends CI_Emerald_Model
 
 
     /**
-     * @param self[] $data
-     * @return stdClass[]
+     * @param array $data
+     * @return array
      */
-    private static function _preparation_full_info($data)
+    private static function _preparation_full_info(array $data): array
     {
-        $ret = [];
+        $result = [];
+        $counter = 0;
 
-        foreach ($data as $d){
-            $o = new stdClass();
+        foreach ($data as $comment) {
+            $stdClass = new stdClass();
+            $stdClass->id   = $comment->get_id();
+            $stdClass->text = $comment->get_text();
+            $stdClass->user  = User_model::preparation($comment->get_user(),'main_page');
+            $stdClass->likes = Like_model::like_counter($comment->get_id(),Like_model::COMMENT_LIKE);
+            $stdClass->time_created = $comment->get_time_created();
+            $stdClass->time_updated = $comment->get_time_updated();
 
-            $o->id = $d->get_id();
-            $o->text = $d->get_text();
+            $result[$counter] = $stdClass;
+            $result[$counter]->comments = self::_preparation_full_info($comment->get_comments());
 
-            $o->user = User_model::preparation($d->get_user(),'main_page');
-
-            $o->likes = Like_model::like_counter($d->get_id(),Like_model::COMMENT_LIKE);
-
-            $o->time_created = $d->get_time_created();
-            $o->time_updated = $d->get_time_updated();
-
-            $ret[] = $o;
+            $counter++;
         }
 
-
-        return $ret;
+        return $result;
     }
 
     /**

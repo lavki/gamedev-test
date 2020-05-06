@@ -42,12 +42,11 @@ class Main_page extends MY_Controller
 
         $post_id = intval($post_id);
 
-        if (empty($post_id)){
+        if (empty($post_id)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
         }
 
-        try
-        {
+        try {
             $post = new Post_model($post_id);
         } catch (EmeraldModelNoDataException $ex){
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_DATA);

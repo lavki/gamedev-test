@@ -1,3 +1,17 @@
+Vue.component('comment-item', {
+	name: "comment-item",
+	props: ['comment'],
+	template:
+	'<ul>' +
+	  '<li class="card-text">{{ comment.user.personaname }} - ' +
+	    '<small class="text-muted">{{comment.text}}</small>' +
+	    '<ul v-if="comment.comments && comment.comments.length > 0">' +
+		  '<comment-item v-for="comment in comment.comments" v-bind:comment="comment" v-bind:key="comment.id"/>' +
+		'</ul>' +
+	  '</li>' +
+	'</ul>'
+})
+
 var app = new Vue({
 	el: '#app',
 	data: {
@@ -93,6 +107,7 @@ var app = new Vue({
 				.then(function (response) {
 					self.post = response.data.post;
 					if(self.post){
+						console.log(self.post)
 						setTimeout(function () {
 							$('#postModal').modal('show');
 						}, 500);
