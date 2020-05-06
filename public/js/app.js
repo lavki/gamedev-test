@@ -1,3 +1,17 @@
+Vue.component("comment-item", {
+	name: "comment-item",
+	props: ['comment'],
+	template:
+	'<ul>' +
+	  '<li class="card-text">{{ comment.user.personaname }} - ' +
+	    '<small class="text-muted">{{comment.text}}</small> likes: ({{comment.likes}})' +
+	    '<ul v-if="comment.comments && comment.comments.length > 0">' +
+	      '<comment-item v-for="comment in comment.comments" v-bind:comment="comment" v-bind:key="comment.id"/>' +
+	    '</ul>' +
+	  '</li>' +
+	'</ul>'
+})
+
 var app = new Vue({
 	el: '#app',
 	data: {
@@ -10,7 +24,8 @@ var app = new Vue({
 		posts: [],
 		addSum: 0,
 		amount: 0,
-		likes: 0,
+		postLikes: 0,
+		commentLikes: 0,
 		commentText: '',
 		packs: [
 			{
@@ -91,6 +106,8 @@ var app = new Vue({
 			axios
 				.get('/main_page/get_post/' + id)
 				.then(function (response) {
+					self.postLikes = 0,
+					self.commentLikes = 0,
 					self.post = response.data.post;
 					if(self.post){
 						setTimeout(function () {
@@ -99,13 +116,16 @@ var app = new Vue({
 					}
 				})
 		},
-		addLike: function (id) {
-			var self= this;
+		addLike: function (id, type) {
+			var self = this;
 			axios
-				.get('/main_page/like/' + id)
+				.get('/main_page/like/' + id + '/' + type)
 				.then(function (response) {
-					self.likes = response.data.likes;
-					console.log(self.likes);
+					if(response.data.type == 'comment') {
+						self.commentLikes = response.data.likes;
+					} else {
+						self.postLikes = response.data.likes;
+					}
 				})
 
 		},

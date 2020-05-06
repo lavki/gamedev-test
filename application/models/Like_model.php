@@ -132,16 +132,14 @@ class Like_model extends CI_Emerald_Model
      */
     public static function create(array $data)
     {
-        if (User_model::can_liked()) {
-            App::get_ci()->s->from(self::CLASS_TABLE)->insert($data)->execute();
+        App::get_ci()->s->from(self::CLASS_TABLE)->insert($data)->execute();
 
-            $insert_id = App::get_ci()->s->get_insert_id();
+        $insert_id = App::get_ci()->s->get_insert_id();
 
-            if ($insert_id > 0) {
-                User_model::spent_like();
+        if ($insert_id > 0) {
+            User_model::spent_like();
 
-                return new static($insert_id);
-            }
+            return new static($insert_id);
         }
     }
 

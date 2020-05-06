@@ -42,12 +42,11 @@ class Main_page extends MY_Controller
 
         $post_id = intval($post_id);
 
-        if (empty($post_id)){
+        if (empty($post_id)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
         }
 
-        try
-        {
+        try {
             $post = new Post_model($post_id);
         } catch (EmeraldModelNoDataException $ex){
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_DATA);
@@ -58,6 +57,11 @@ class Main_page extends MY_Controller
         return $this->response_success(['post' => $posts]);
     }
 
+    /**
+     * @param int $post_id
+     * @param string $message
+     * @return object|string|void
+     */
     public function comment(int $post_id, string $message) // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
     {
         if (!User_model::is_logged()) {
@@ -150,11 +154,15 @@ class Main_page extends MY_Controller
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);
         }
 
-        if (Like_model::is_available_type($type)) {
-            Like_model::create(Like_model::prepareData($relation_id, $type));
-        }
+        if (User_model::can_liked()) {
+            if (Like_model::is_available_type($type)) {
+                $like = Like_model::create(Like_model::prepareData($relation_id, $type));
 
-        return $this->response_success(['likes' => Like_model::like_counter($relation_id, $type)]);
+                return $this->response_success(['type'  => $type, 'id' => $like->get_relation_id(), 'likes' => Like_model::like_counter($relation_id, $type)]);
+            }
+        } else {
+            return $this->response_error(CI_Core::RESPONSE_GENERIC_TRY_LATER);
+        }
         // Колво лайков под постом \ комментарием чтобы обновить
     }
 
