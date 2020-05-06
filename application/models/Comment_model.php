@@ -277,6 +277,7 @@ class Comment_model extends CI_Emerald_Model
         foreach ($data as $comment) {
             $stdClass = new stdClass();
             $stdClass->id   = $comment->get_id();
+            $stdClass->assign_id = $comment->get_assign_id();
             $stdClass->text = $comment->get_text();
             $stdClass->user  = User_model::preparation($comment->get_user(),'main_page');
             $stdClass->likes = Like_model::like_counter($comment->get_id(),Like_model::COMMENT_LIKE);
