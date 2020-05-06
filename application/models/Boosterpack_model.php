@@ -125,6 +125,7 @@ class Boosterpack_model extends CI_Emerald_Model
     }
 
     /**
+     * Logic of buying Boosterpack and win the likes
      * @param int $id
      * @return int
      */
@@ -146,6 +147,7 @@ class Boosterpack_model extends CI_Emerald_Model
     }
 
     /**
+     * Select random likes from 1 ~ (Boosterpack band + Boosterpack price)
      * @param float $bank
      * @param float $price
      * @return int

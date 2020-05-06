@@ -395,6 +395,7 @@ class User_model extends CI_Emerald_Model {
     }
 
     /**
+     * Find user by giving email address
      * @param string $email
      * @return array
      */
@@ -404,6 +405,8 @@ class User_model extends CI_Emerald_Model {
     }
 
     /**
+     * Authentication user
+     * On db password stored with hashed
      * @param string $email
      * @param string $password
      * @return int
@@ -422,6 +425,7 @@ class User_model extends CI_Emerald_Model {
     }
 
     /**
+     * Add money to the wallet and wallet_total_refilled
      * @param float $sum
      * @return float
      */
@@ -434,6 +438,7 @@ class User_model extends CI_Emerald_Model {
     }
 
     /**
+     * It is the sum witch will be store on user wallet
      * @param float $sum
      * @return float
      */
@@ -443,6 +448,7 @@ class User_model extends CI_Emerald_Model {
     }
 
     /**
+     * It is a sum witch will be store on DB (all user refilled)
      * @param float $sum
      * @return float
      */
@@ -452,6 +458,7 @@ class User_model extends CI_Emerald_Model {
     }
 
     /**
+     * Counter for take money from user wallet and put winning likes to their wallet
      * @param User_model $user
      * @param Boosterpack_model $boosterPack
      * @param int $winLikes
@@ -469,14 +476,16 @@ class User_model extends CI_Emerald_Model {
     }
 
     /**
+     * We schould to check if user has likes on the bank
      * @return bool
      */
-    public static function can_liked()
+    public static function can_liked(): bool
     {
         return (self::get_user()->get_likes() >= 1);
     }
 
     /**
+     * Take like from user wallet likes
      * @return bool
      */
     public static function spent_like()
