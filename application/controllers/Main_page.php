@@ -60,10 +60,9 @@ class Main_page extends MY_Controller
     /**
      * @param int $post_id
      * @param string $message
-     * @param string $type
-     * @return mixed
+     * @return object|string|void
      */
-    public function comment(int $post_id, string $message, string $type = 'post') // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
+    public function comment(int $post_id, string $message) // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
     {
         if (!User_model::is_logged()) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);

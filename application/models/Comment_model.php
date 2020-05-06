@@ -298,12 +298,12 @@ class Comment_model extends CI_Emerald_Model
      * @param string $message
      * @return array
      */
-    public static function prepareData(int $post_id, string $message)
+    public static function prepareData(int $post_id, string $message): array
     {
         return [
             'user_id'   => User_model::get_session_id(),
             'assign_id' => $post_id,
-            'text'      => urldecode($message)
+            'text'      => urldecode($message),
         ];
     }
 }
