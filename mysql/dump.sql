@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.7
+-- version 4.9.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Час створення: Трв 04 2020 р., 19:54
--- Версія сервера: 5.7.21-log
--- Версія PHP: 7.2.0
+-- Час створення: Трв 06 2020 р., 16:19
+-- Версія сервера: 5.7.18
+-- Версія PHP: 7.3.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -41,9 +41,9 @@ CREATE TABLE `boosterpack` (
 --
 
 INSERT INTO `boosterpack` (`id`, `price`, `bank`, `time_created`, `time_updated`) VALUES
-(1, '5.00', '4.00', '2020-03-30 00:17:28', '2020-05-04 14:10:33'),
-(2, '20.00', '1.00', '2020-03-30 00:17:28', '2020-05-04 14:10:09'),
-(3, '50.00', '48.00', '2020-03-30 00:17:28', '2020-05-04 14:09:46');
+(1, '5.00', '0.00', '2020-03-30 00:17:28', '2020-05-03 17:41:01'),
+(2, '20.00', '0.00', '2020-03-30 00:17:28', '2020-05-03 17:41:01'),
+(3, '50.00', '14.00', '2020-03-30 00:17:28', '2020-05-06 12:41:09');
 
 -- --------------------------------------------------------
 
@@ -56,6 +56,7 @@ CREATE TABLE `comment` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `assign_id` int(10) UNSIGNED NOT NULL,
   `text` text NOT NULL,
+  `parent_id` int(11) DEFAULT NULL,
   `time_created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `time_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -64,12 +65,16 @@ CREATE TABLE `comment` (
 -- Дамп даних таблиці `comment`
 --
 
-INSERT INTO `comment` (`id`, `user_id`, `assign_id`, `text`, `time_created`, `time_updated`) VALUES
-(1, 1, 1, 'Ну чо ассигн проверим', '2020-03-27 21:39:44', '2020-05-04 09:54:04'),
-(2, 1, 1, 'Второй коммент', '2020-03-27 21:39:55', '2020-05-04 09:54:04'),
-(3, 2, 1, 'Второй коммент от второго человека', '2020-03-27 21:40:22', '2020-05-04 09:54:04'),
-(4, 2, 1, 'Перший комент з форми', '2020-05-04 10:27:24', '2020-05-04 10:27:24'),
-(5, 2, 1, 'Другий комент з форми', '2020-05-04 10:27:36', '2020-05-04 10:27:36');
+INSERT INTO `comment` (`id`, `user_id`, `assign_id`, `text`, `parent_id`, `time_created`, `time_updated`) VALUES
+(1, 1, 1, 'Ну чо ассигн проверим', NULL, '2020-03-27 21:39:44', '2020-05-03 17:41:02'),
+(2, 1, 1, 'Второй коммент', NULL, '2020-03-27 21:39:55', '2020-05-03 17:41:02'),
+(3, 2, 1, 'Второй коммент от второго человека', NULL, '2020-03-27 21:40:22', '2020-05-03 17:41:02'),
+(4, 1, 2, 'comment №1', NULL, '2020-05-05 19:14:17', '2020-05-06 11:54:43'),
+(5, 1, 2, 'comment №2', 4, '2020-05-05 19:14:17', '2020-05-06 11:54:48'),
+(6, 1, 2, 'comment №3', 5, '2020-05-05 19:14:17', '2020-05-06 11:54:53'),
+(7, 1, 2, 'comment №5', NULL, '2020-05-05 19:14:17', '2020-05-06 11:54:56'),
+(8, 1, 2, 'comment №4', 5, '2020-05-05 19:14:17', '2020-05-06 11:55:01'),
+(17, 1, 2, 'comment №6', NULL, '2020-05-06 11:55:27', '2020-05-06 11:55:27');
 
 -- --------------------------------------------------------
 
@@ -82,29 +87,19 @@ CREATE TABLE `likes` (
   `user_id` int(11) NOT NULL,
   `relation_id` int(11) NOT NULL,
   `type` enum('post','comment') NOT NULL,
-  `time_created` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `time_created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `time_updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп даних таблиці `likes`
 --
 
-INSERT INTO `likes` (`id`, `user_id`, `relation_id`, `type`, `time_created`) VALUES
-(1, 1, 2, 'post', '2020-05-04 19:01:01'),
-(2, 1, 2, 'post', '2020-05-04 19:01:33'),
-(3, 1, 2, 'post', '2020-05-04 19:02:41'),
-(4, 1, 2, 'post', '2020-05-04 19:03:02'),
-(5, 1, 2, 'post', '2020-05-04 19:06:18'),
-(6, 1, 2, 'post', '2020-05-04 19:06:30'),
-(7, 1, 2, 'post', '2020-05-04 19:18:49'),
-(8, 1, 2, 'post', '2020-05-04 19:28:04'),
-(9, 1, 2, 'post', '2020-05-04 19:32:32'),
-(10, 1, 2, 'post', '2020-05-04 19:32:39'),
-(11, 1, 1, 'post', '2020-05-04 19:40:41'),
-(12, 1, 1, 'post', '2020-05-04 19:41:56'),
-(13, 1, 1, 'post', '2020-05-04 19:42:07'),
-(14, 1, 1, 'post', '2020-05-04 19:49:45'),
-(15, 1, 1, 'post', '2020-05-04 19:50:00');
+INSERT INTO `likes` (`id`, `user_id`, `relation_id`, `type`, `time_created`, `time_updated`) VALUES
+(1, 2, 2, 'post', '2020-05-06 14:19:10', '2020-05-06 14:19:10'),
+(2, 2, 2, 'post', '2020-05-06 14:19:11', '2020-05-06 14:19:11'),
+(3, 2, 2, 'post', '2020-05-06 14:19:11', '2020-05-06 14:19:11'),
+(4, 1, 2, 'comment', '2020-05-06 14:19:11', '2020-05-06 14:19:11');
 
 -- --------------------------------------------------------
 
@@ -126,8 +121,8 @@ CREATE TABLE `post` (
 --
 
 INSERT INTO `post` (`id`, `user_id`, `text`, `img`, `time_created`, `time_updated`) VALUES
-(1, 1, 'Тестовый постик 1', '/images/posts/1.png', '2018-08-30 13:31:14', '2020-05-04 09:54:04'),
-(2, 1, 'Печальный пост', '/images/posts/2.png', '2018-10-11 01:33:27', '2020-05-04 09:54:04');
+(1, 1, 'Тестовый постик 1', '/images/posts/1.png', '2018-08-30 13:31:14', '2020-05-03 17:41:02'),
+(2, 1, 'Печальный пост', '/images/posts/2.png', '2018-10-11 01:33:27', '2020-05-03 17:41:02');
 
 -- --------------------------------------------------------
 
@@ -138,7 +133,7 @@ INSERT INTO `post` (`id`, `user_id`, `text`, `img`, `time_created`, `time_update
 CREATE TABLE `user` (
   `id` int(11) UNSIGNED NOT NULL,
   `email` varchar(60) DEFAULT NULL,
-  `password` varchar(32) DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
   `personaname` varchar(50) NOT NULL DEFAULT '',
   `avatarfull` varchar(150) NOT NULL DEFAULT '',
   `rights` tinyint(4) NOT NULL DEFAULT '0',
@@ -155,8 +150,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `email`, `password`, `personaname`, `avatarfull`, `rights`, `wallet_balance`, `wallet_total_refilled`, `wallet_total_withdrawn`, `likes`, `time_created`, `time_updated`) VALUES
-(1, 'admin@niceadminmail.pl', 'password', 'AdminProGod', 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/96/967871835afdb29f131325125d4395d55386c07a_full.jpg', 0, '30.00', '230.00', '200.00', 127, '2019-07-26 01:53:54', '2020-05-04 19:50:00'),
-(2, 'simpleuser@niceadminmail.pl', 'secret', 'simpleuser', 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/86/86a0c845038332896455a566a1f805660a13609b_full.jpg', 0, '0.00', '0.00', '0.00', 0, '2019-07-26 01:53:54', '2020-05-04 09:54:34');
+(1, 'admin@niceadminmail.pl', '$2y$10$Bp2gZAOuOv7U0BWyUy/qiOsDFy7KZ0D6B9i7OaOiaT7lPP5jxp7HK', 'AdminProGod', 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/96/967871835afdb29f131325125d4395d55386c07a_full.jpg', 0, '4.00', '104.00', '100.00', 902, '2019-07-26 01:53:54', '2020-05-06 13:09:14'),
+(2, 'simpleuser@niceadminmail.pl', '$2y$10$vmlrunKDD/ESJFyufZYUlevSsEybdQn2RmqKl44QD1P.8Sc1RvN8m', 'simpleuser', 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/86/86a0c845038332896455a566a1f805660a13609b_full.jpg', 0, '25.00', '125.00', '100.00', 52, '2019-07-26 01:53:54', '2020-05-06 14:19:11');
 
 --
 -- Індекси збережених таблиць
@@ -211,19 +206,19 @@ ALTER TABLE `boosterpack`
 -- AUTO_INCREMENT для таблиці `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT для таблиці `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблиці `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблиці `user`
