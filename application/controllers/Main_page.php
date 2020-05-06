@@ -77,6 +77,7 @@ class Main_page extends MY_Controller
         try {
             $post = new Post_model($post_id);
 
+            // create new comment
             Comment_model::create(Comment_model::prepareData($post_id, $message));
 
         } catch (EmeraldModelNoDataException $ex) {
