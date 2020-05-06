@@ -248,7 +248,7 @@ class Comment_model extends CI_Emerald_Model
 
             $o->user = User_model::preparation($d->get_user(),'main_page');
 
-            $o->likes = Like_model::like_counter($data->get_id(),Like_model::COMMENT_LIKE);
+            $o->likes = Like_model::like_counter($d->get_id(),Like_model::COMMENT_LIKE);
 
             $o->time_created = $d->get_time_created();
             $o->time_updated = $d->get_time_updated();
