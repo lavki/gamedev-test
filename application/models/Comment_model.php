@@ -14,9 +14,11 @@ class Comment_model extends CI_Emerald_Model
     /** @var int */
     protected $user_id;
     /** @var int */
-    protected $assing_id;
+    protected $assign_id;
     /** @var string */
     protected $text;
+    /** @var int */
+    protected $parent_id;
 
     /** @var string */
     protected $time_created;
@@ -51,20 +53,19 @@ class Comment_model extends CI_Emerald_Model
     /**
      * @return int
      */
-    public function get_assing_id(): int
+    public function get_assign_id(): int
     {
-        return $this->assing_id;
+        return $this->assign_id;
     }
 
     /**
-     * @param int $assing_id
-     *
+     * @param int $assign_id
      * @return bool
      */
-    public function set_assing_id(int $assing_id)
+    public function set_assign_id(int $assign_id)
     {
-        $this->assing_id = $assing_id;
-        return $this->save('assing_id', $assing_id);
+        $this->assign_id = $assign_id;
+        return $this->save('assign_id', $assign_id);
     }
 
 
@@ -87,6 +88,23 @@ class Comment_model extends CI_Emerald_Model
         return $this->save('text', $text);
     }
 
+    /**
+     * @return int|null
+     */
+    public function get_parent_id():? int
+    {
+        return $this->parent_id;
+    }
+
+    /**
+     * @param int $parent_id
+     * @return bool
+     */
+    public function set_parent_id(int $parent_id)
+    {
+        $this->parent_id = $parent_id;
+        return $this->save('parent_id', $parent_id);
+    }
 
     /**
      * @return string
@@ -116,8 +134,7 @@ class Comment_model extends CI_Emerald_Model
     }
 
     /**
-     * @param string $time_updated
-     *
+     * @param int $time_updated
      * @return bool
      */
     public function set_time_updated(int $time_updated)
@@ -153,17 +170,16 @@ class Comment_model extends CI_Emerald_Model
     /**
      * @return User_model
      */
-    public function get_user():User_model
+    public function get_user(): User_model
     {
-        if (empty($this->user))
-        {
+        if (is_null($this->user)) {
             try {
                 $this->user = new User_model($this->get_user_id());
-            } catch (Exception $exception)
-            {
+            } catch (Exception $exception) {
                 $this->user = new User_model();
             }
         }
+
         return $this->user;
     }
 
@@ -204,14 +220,32 @@ class Comment_model extends CI_Emerald_Model
      */
     public static function get_all_by_assign_id(int $assting_id)
     {
-
         $data = App::get_ci()->s->from(self::CLASS_TABLE)->where(['assign_id' => $assting_id])->orderBy('time_created','ASC')->many();
-        $ret = [];
-        foreach ($data as $i)
-        {
-            $ret[] = (new self())->set($i);
+
+        return self::get_tree_of_comments($data);
+    }
+
+    /**
+     * @param array $data
+     * @param int|null $parent_id
+     * @return array
+     */
+    private static function get_tree_of_comments(array $data, int $parent_id = null): array
+    {
+        $result = [];
+        $counter = 0;
+
+        foreach ($data as $comment) {
+            if ($comment['parent_id'] == $parent_id) {
+
+                $result[$counter] = (new self())->set($comment);
+                $result[$counter]->comments = (self::get_tree_of_comments($data, $comment['id']));
+
+                $counter++;
+            }
         }
-        return $ret;
+
+        return $result;
     }
 
     /**
@@ -222,8 +256,7 @@ class Comment_model extends CI_Emerald_Model
      */
     public static function preparation($data, $preparation = 'default')
     {
-        switch ($preparation)
-        {
+        switch ($preparation) {
             case 'full_info':
                 return self::_preparation_full_info($data);
             default:
@@ -233,31 +266,31 @@ class Comment_model extends CI_Emerald_Model
 
 
     /**
-     * @param self[] $data
-     * @return stdClass[]
+     * @param array $data
+     * @return array
      */
-    private static function _preparation_full_info($data)
+    private static function _preparation_full_info(array $data): array
     {
-        $ret = [];
+        $result = [];
+        $counter = 0;
 
-        foreach ($data as $d){
-            $o = new stdClass();
+        foreach ($data as $comment) {
+            $stdClass = new stdClass();
+            $stdClass->id   = $comment->get_id();
+            $stdClass->assign_id = $comment->get_assign_id();
+            $stdClass->text = $comment->get_text();
+            $stdClass->user  = User_model::preparation($comment->get_user(),'main_page');
+            $stdClass->likes = Like_model::like_counter($comment->get_id(),Like_model::COMMENT_LIKE);
+            $stdClass->time_created = $comment->get_time_created();
+            $stdClass->time_updated = $comment->get_time_updated();
 
-            $o->id = $d->get_id();
-            $o->text = $d->get_text();
+            $result[$counter] = $stdClass;
+            $result[$counter]->comments = self::_preparation_full_info($comment->get_comments());
 
-            $o->user = User_model::preparation($d->get_user(),'main_page');
-
-            $o->likes = Like_model::like_counter($data->get_id(),Like_model::COMMENT_LIKE);
-
-            $o->time_created = $d->get_time_created();
-            $o->time_updated = $d->get_time_updated();
-
-            $ret[] = $o;
+            $counter++;
         }
 
-
-        return $ret;
+        return $result;
     }
 
     /**
@@ -265,12 +298,12 @@ class Comment_model extends CI_Emerald_Model
      * @param string $message
      * @return array
      */
-    public static function prepareData(int $post_id, string $message)
+    public static function prepareData(int $post_id, string $message): array
     {
         return [
             'user_id'   => User_model::get_session_id(),
             'assign_id' => $post_id,
-            'text'      => urldecode($message)
+            'text'      => urldecode($message),
         ];
     }
 }
