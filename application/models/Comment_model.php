@@ -14,7 +14,7 @@ class Comment_model extends CI_Emerald_Model
     /** @var int */
     protected $user_id;
     /** @var int */
-    protected $assign_id;
+    protected $assing_id;
     /** @var string */
     protected $text;
     /** @var int */
@@ -53,19 +53,19 @@ class Comment_model extends CI_Emerald_Model
     /**
      * @return int
      */
-    public function get_assign_id(): int
+    public function get_assing_id(): int
     {
         return $this->assign_id;
     }
 
     /**
-     * @param int $assign_id
+     * @param int $assing_id
      * @return bool
      */
-    public function set_assign_id(int $assign_id)
+    public function set_assing_id(int $assing_id)
     {
-        $this->assign_id = $assign_id;
-        return $this->save('assign_id', $assign_id);
+        $this->assing_id = $assing_id;
+        return $this->save('assign_id', $assing_id);
     }
 
 
@@ -277,7 +277,7 @@ class Comment_model extends CI_Emerald_Model
         foreach ($data as $comment) {
             $stdClass = new stdClass();
             $stdClass->id   = $comment->get_id();
-            $stdClass->assign_id = $comment->get_assign_id();
+            $stdClass->assing_id = $comment->get_assing_id();
             $stdClass->text = $comment->get_text();
             $stdClass->user  = User_model::preparation($comment->get_user(),'main_page');
             $stdClass->likes = Like_model::like_counter($comment->get_id(),Like_model::COMMENT_LIKE);

@@ -106,9 +106,10 @@ var app = new Vue({
 			axios
 				.get('/main_page/get_post/' + id)
 				.then(function (response) {
+					self.postLikes = 0,
+					self.commentLikes = 0,
 					self.post = response.data.post;
 					if(self.post){
-						console.log(self.post)
 						setTimeout(function () {
 							$('#postModal').modal('show');
 						}, 500);
@@ -142,10 +143,10 @@ var app = new Vue({
 					}
 				})
 		},
-        addComment: function (post_id, type) {
+        addComment: function (post_id) {
             var self = this;
 
-            axios.get('/main_page/comment/' + post_id + '/' + self.commentText + '/' + type)
+            axios.get('/main_page/comment/' + post_id + '/' + self.commentText)
                 .then(function (response) {
                     self.post = response.data.post;
                     if(self.post){
